@@ -18,7 +18,7 @@ class LinkedList:
         while(head.next):           # добираемся до последнего элемента в списке
            head = head.next
         head.next = additem         # указываем в последнем ссылку на новый
-    # и перестановка элементв, и сбор результатта в массив O(n)
+    # и перестановка элементов списка, и сбор результата в массив O(n)
     def revers(self):
         prev = None
         current = self.head
