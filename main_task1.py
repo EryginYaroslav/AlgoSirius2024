@@ -1,10 +1,15 @@
+
+# класс устанавливает элементу значение и ссылку на следующий элемент
+# так как список односвязный на предыдущий элемент нет ссылок.
 class Node:
     def __init__(self,value):
         self.value = value
         self.next = None
         
+# класс управляет добавление и реверсом данных      
 class LinkedList:
     def __init__(self):
+        # инициализация, ставим голову пустой
         self.head = None
         
     def append(self,value):
@@ -35,7 +40,7 @@ class LinkedList:
             result.append(linkedlist.value)
             linkedlist = linkedlist.next
         return result
-        
+# инициализируем список        
 ResultList = LinkedList()
 # Заполняем список
 ResultList.append(1)
