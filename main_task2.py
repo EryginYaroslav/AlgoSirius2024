@@ -1,68 +1,77 @@
 class Relevance:
-    arr_priznak = []
-    n_num = []
-    
     def __init__(self):
-        cnt_param = int(input())
-        if cnt_param < 1 or cnt_param > 100:
-            print('Не в промежутке 1 <= n <= 100')
+        # Считываем количество параметров
+        self.cnt_param = int(input())
+        # Проверяем, что количество параметров в допустимом диапазоне
+        if self.cnt_param < 1 or self.cnt_param > 100:
+            print('Ошибка: число параметров вне диапазона 1 <= n <= 100')
             exit()
-        n_num = input()
-        n_num = n_num.split()
-        self.n_num.append(n_num) 
-        if len(n_num) < 0 or len(n_num) > (10**8):
-            print('Не в промежутке 0 <= n <= 10^8')
+
+        # Считываем веса параметров
+        self.weights = list(map(int, input().split()))
+        # Проверяем корректность введенных весов
+        if len(self.weights) != self.cnt_param or any(a < 0 or a > 10**8 for a in self.weights):
+            print('Ошибка: веса параметров некорректны')
             exit()
-        #print(n_num)
-        d_num = int(input())
-        if (d_num < 1 or d_num > 100000) or ((d_num*len(n_num)) > 100000):
-            print('err')
+
+        # Считываем количество объектов
+        self.cnt_objects = int(input())
+        # Проверяем, что количество объектов в допустимом диапазоне
+        if self.cnt_objects < 1 or self.cnt_objects > 100000:
+            print('Ошибка: число объектов вне диапазона 1 <= d <= 100000')
             exit()
-        #print(d_num)
-        #arr_priznak = []
-        for x in range (0,d_num):
-            priznak = input()
-            priznak = priznak.split()
-            if len(priznak) > cnt_param:
-                print('err')
+
+        self.objects = []
+        # Считываем объекты и проверяем их корректность
+        for _ in range(self.cnt_objects):
+            obj = list(map(int, input().split()))
+            if len(obj) != self.cnt_param or any(f < 0 or f > 10**8 for f in obj):
+                print('Ошибка: признаки объекта некорректны')
                 exit()
-            self.arr_priznak.append(priznak)
-        #print(arr_priznak)
-        cnt_query = int(input())
-        if cnt_query < 1 or cnt_query>100000:
+            self.objects.append(obj)
+
+        # Считываем количество запросов
+        self.cnt_queries = int(input())
+        # Проверяем, что количество запросов в допустимом диапазоне
+        if self.cnt_queries < 1 or self.cnt_queries > 100000:
+            print('Ошибка: число запросов вне диапазона 1 <= q <= 100000')
             exit()
-        for x in range (0,cnt_query):
-            query = input()
-            query = query.split()
-            if len(query) == 2:
-                print('get')
-                if int(query[1]) < 0 or int(query[1]) > 10 or int(query[0]) != 1:
-                    print('err')
-                    exit()
-                
-            elif len(query) == 4:
-                print('update')
-                if query[0] != 2 or query[1] < 1 or query[1] > d_num or query[2] < 1 or query[2] > n_num or query[3] < 0 or query[3] > (10**8):
-                    print('err')
-                    exit()
-                
+
+        self.queries = []
+        # Считываем запросы и проверяем их корректность
+        for _ in range(self.cnt_queries):
+            query = list(map(int, input().split()))
+            if len(query) == 2 and query[0] == 1 and 1 <= query[1] <= 10:
+                self.queries.append(query)  # Запрос на выдачу топ-K
+            elif len(query) == 4 and query[0] == 2 and 1 <= query[1] <= self.cnt_objects \
+                    and 1 <= query[2] <= self.cnt_param and 0 <= query[3] <= 10**8:
+                self.queries.append(query)  # Запрос на изменение признака
             else:
-                print('err')
+                print('Ошибка: некорректный запрос')
                 exit()
+
+    def calc_relevance(self, obj):
+        # Вычисляем релевантность объекта, умножая веса на параметры объекта и суммируя результаты
+        return sum(a * f for a, f in zip(self.weights, obj))
     
     def calc(self):
-        print(self.arr_priznak)
-        print(self.n_num)
-        n_num_int = [int(num) for num in self.n_num]
-        for priznak in self.arr_priznak:
-            res = (priznak[0] * n_num_int[0])+(priznak[1] * n_num_int[1])
-            print(res)
+        # Обрабатываем каждый запрос из списка
+        for query in self.queries:
+            if query[0] == 1:  # Запрос на выдачу топ-K
+                k = query[1]  # Получаем значение K
+                # Вычисляем релевантность для каждого объекта и создаем список кортежей (релевантность, индекс)
+                relevances = [(self.calc_relevance(obj), i + 1) for i, obj in enumerate(self.objects)]
+                # Сортируем список по релевантности (по убыванию) и по индексу (по возрастанию)
+                relevances.sort(reverse=True, key=lambda x: (x[0], -x[1]))
+                # Извлекаем индексы объектов с наивысшей релевантностью
+                result = [idx for _, idx in relevances[:k]]
+                print(*result)  # Печатаем индексы объектов
+            elif query[0] == 2:  # Запрос на изменение признака
+                obj_idx = query[1] - 1  # Индекс объекта (уменьшаем на 1 для доступа к списку)
+                param_idx = query[2] - 1  # Индекс параметра (уменьшаем на 1 для доступа к списку)
+                new_value = query[3]  # Новое значение для параметра
+                self.objects[obj_idx][param_idx] = new_value  # Обновляем значение параметра объекта
 
-            
+# Создаем экземпляр класса и запускаем обработку запросов
 relevance_instance = Relevance()
 relevance_instance.calc()
-
-
-
-
-
