@@ -1,3 +1,5 @@
+#сложность алгоритма O(n)
+
 class BinaryTree:
     class Node:
         def __init__(self,value):
