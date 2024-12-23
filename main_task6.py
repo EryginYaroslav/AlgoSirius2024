@@ -1,8 +1,11 @@
+#общая сложность O(n log n)
+
 from datetime import datetime, timedelta
 
 def get_max_guest(self):
     day = []
     #перебираем массив
+    # O(n)
     for in_otel,out_otel in self:
         #прелобрахуем в тип дата
         in_otel = datetime.strptime(in_otel,"%Y-%m-%d")
@@ -12,12 +15,14 @@ def get_max_guest(self):
         day.append((in_otel,+1))
         day.append((out_otel,-1))
     #обязательно сортируем массив, что бы сохранить хронологию заезда/выезда
+    #O(n log n)
     day.sort()
     #устанавливаем счетчики
     cur_guest = 0
     max_guest = 0
     max_date = None
     #перебираем список и сравнивам даты 
+    # O(n)
     for date, guest in day:
         #устанавливаем количество гостей, на каждой итерации +- 1
         cur_guest += guest
