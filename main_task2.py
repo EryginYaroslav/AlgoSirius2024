@@ -39,6 +39,7 @@ class Relevance:
 
         self.queries = []
         # Считываем запросы и проверяем их корректность
+        # O(n)
         for _ in range(self.cnt_queries):
             query = list(map(int, input().split()))
             if len(query) == 2 and query[0] == 1 and 1 <= query[1] <= 10:
@@ -53,7 +54,7 @@ class Relevance:
     def calc_relevance(self, obj):
         # Вычисляем релевантность объекта, умножая веса на параметры объекта и суммируя результаты
         return sum(a * f for a, f in zip(self.weights, obj))
-    
+    # O(n log n)
     def calc(self):
         # Обрабатываем каждый запрос из списка
         for query in self.queries:
